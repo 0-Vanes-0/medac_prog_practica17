@@ -7,8 +7,10 @@ public class MainForm {
     private JLabel titleLabel;
     private JTable elementsTable;
     private JButton newButton;
-    private JButton deleteButton;
     private JButton modifyButton;
+    private JButton deleteButton;
+    private JButton fileButton;
+    private JButton aboutButton;
 
     public MainForm() {
 
