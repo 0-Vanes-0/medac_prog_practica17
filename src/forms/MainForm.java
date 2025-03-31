@@ -91,7 +91,39 @@ public class MainForm {
         MainForm form = new MainForm();
         frame.setContentPane(form.panelMain);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setMinimumSize(form.panelMain.getMinimumSize());
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Perform actions before closing, such as saving data
+                int response = JOptionPane.showConfirmDialog(frame,
+                        "Quieres guardar la info?",
+                        "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.YES_OPTION) { // Save data and close the window
+                    TableModel model = form.elementsTable.getModel();
+                    List<Meme> memes = new ArrayList<>();
+                    for (int i = 0; i < model.getRowCount(); i++) {
+                        Meme meme = new Meme(
+                                model.getValueAt(i, 0).toString(),
+                                Integer.parseInt(model.getValueAt(i, 1).toString()),
+                                Integer.parseInt(model.getValueAt(i, 2).toString()),
+                                model.getValueAt(i, 3).toString(),
+                                Boolean.parseBoolean(model.getValueAt(i, 4).toString())
+                        );
+                        memes.add(meme);
+                    }
+                    SaveLoadManager.saveData(memes);
+                    frame.dispose();
+                } else if (response == JOptionPane.NO_OPTION) { // Close the window without saving
+                    frame.dispose();
+                }
+                // If CANCEL is selected, do nothing; the window remains open
+            }
+        });
+        
         frame.pack();
         frame.setVisible(true);
     }
