@@ -2,6 +2,10 @@ package forms;
 
 import javax.swing.*;
 
+/**
+ * Author: Ivan + Konstantin
+ */
+
 public class MainForm {
     private JPanel panelMain;
     private JLabel titleLabel;

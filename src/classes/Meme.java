@@ -1,5 +1,9 @@
 package classes;
 
+/**
+ * Author: Ivan
+ */
+
 public class Meme {
 
     private String nombre;

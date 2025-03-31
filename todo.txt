@@ -1,0 +1,18 @@
+1. Create a form "SaveForm"
+1.1. Create fields for properties of class Meme.
+1.2. Create button [Save].
+1.3. On [Save] click check if data is written
+1.3.1. If something is missing or wrong - need to color red corresponding fields.
+1.3.2. If everything is ok - add new data to MainForm and to ArrayList.
+1.4. Create button [Cancel] to hide this form.
+
+2. On addButton click - call SaveForm.
+
+3. On modifyButton click - call SaveForm but fill info from a selected row.
+3.1. If no row selected - do not call the form and show warning: "Select row first!" [OK]
+
+4. On deleteButton click - show a confirmation dialog (Do you want to delete this row? [Yes] [No]).
+4.1. If [Yes] pressed - delete selected row and show success message. Also delete from ArrayList.
+4.2. If no row selected - do not call the dialog and show warning: "Select row first!" [OK]\
+
+5. Create ArrayList connected to table of MainForm.
