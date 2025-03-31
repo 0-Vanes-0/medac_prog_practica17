@@ -4,8 +4,12 @@ import classes.Meme;
 import classes.SaveLoadManager;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -26,6 +30,8 @@ public class MainForm {
     private JButton aboutButton;
     private JScrollPane tableScrollPane;
 
+    private int selectedRow = -1;
+
     public MainForm() {
         List<Meme> memes = SaveLoadManager.loadData();
         String[][] data = new String[memes.size()][5];
@@ -43,6 +49,41 @@ public class MainForm {
             );
             elementsTable.setModel(dataModel);
         }
+
+        elementsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        elementsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent listSelectionEvent) {
+                if (!listSelectionEvent.getValueIsAdjusting()) {
+                    int row = elementsTable.getSelectedRow();
+                    if (row != -1) {
+                        selectedRow = row;
+                    }
+                }
+            }
+        });
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Al principio, elige una fila.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    int response = JOptionPane.showConfirmDialog(
+                            null,
+                            "Estas segur@?",
+                            "Eliminacion",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE
+                    );
+                    if (response == JOptionPane.YES_OPTION) {
+                        int modelRow = elementsTable.convertRowIndexToModel(selectedRow);
+                        ((DefaultTableModel) elementsTable.getModel()).removeRow(modelRow);
+                        selectedRow = -1;
+                    }
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
