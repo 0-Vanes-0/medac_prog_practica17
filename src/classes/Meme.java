@@ -12,11 +12,11 @@ public class Meme {
     private String url;
     private boolean esImagen;
 
-    public Meme(String nombre, int anyoOrigen, int popularidad, String etiquetas, boolean esImagen) {
+    public Meme(String nombre, int anyoOrigen, int popularidad, String url, boolean esImagen) {
         this.nombre = nombre;
         this.anyoOrigen = anyoOrigen;
         this.popularidad = popularidad;
-        this.url = etiquetas;
+        this.url = url;
         this.esImagen = esImagen;
     }
 
