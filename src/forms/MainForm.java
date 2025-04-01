@@ -34,18 +34,19 @@ public class MainForm {
 
     public MainForm() {
         List<Meme> memes = SaveLoadManager.loadData();
-        String[][] data = new String[memes.size()][5];
-        for (int i = 0; i < memes.size(); i++) {
-            data[i][0] = memes.get(i).getNombre();
-            data[i][1] = String.valueOf(memes.get(i).getAnyoOrigen());
-            data[i][2] = String.valueOf(memes.get(i).getPopularidad());
-            data[i][3] = memes.get(i).getUrl();
-            data[i][4] = String.valueOf(memes.get(i).isEsImagen());
-        }
         if (!memes.isEmpty()) {
+            // Converting ArrayList to data for table:
+            String[][] data = new String[memes.size()][5];
+            for (int i = 0; i < memes.size(); i++) {
+                data[i][0] = memes.get(i).getNombre();
+                data[i][1] = String.valueOf(memes.get(i).getAnyoOrigen());
+                data[i][2] = String.valueOf(memes.get(i).getPopularidad());
+                data[i][3] = memes.get(i).getUrl();
+                data[i][4] = String.valueOf(memes.get(i).isEsImagen());
+            }
             TableModel dataModel = new DefaultTableModel(
                     data,
-                    new String[] {"Nombre", "Anyo origen", "Popularidad", "url", "Es imagen?"}
+                    new String[] {"Nombre", "Año origen", "Popularidad", "URL", "¿Es imagen?"}
             );
             elementsTable.setModel(dataModel);
         }
@@ -54,7 +55,7 @@ public class MainForm {
         elementsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
-                if (!listSelectionEvent.getValueIsAdjusting()) {
+                if (!listSelectionEvent.getValueIsAdjusting()) { // To make sure we won't get wrong row
                     int row = elementsTable.getSelectedRow();
                     if (row != -1) {
                         selectedRow = row;
@@ -66,6 +67,8 @@ public class MainForm {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                // No selected row -> show error
+                // Selected row -> show confirmation and if [YES] -> remove row
                 if (selectedRow == -1) {
                     JOptionPane.showMessageDialog(null, "Al principio, elige una fila.", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
@@ -90,18 +93,19 @@ public class MainForm {
         JFrame frame = new JFrame("MyForm");
         MainForm form = new MainForm();
         frame.setContentPane(form.panelMain);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setMinimumSize(form.panelMain.getMinimumSize());
 
+        // On close behavior:
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                // Perform actions before closing, such as saving data
+                // Perform actions before closing
                 int response = JOptionPane.showConfirmDialog(frame,
-                        "Quieres guardar la info?",
+                        "Quieres guardar los cambios?",
                         "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE);
+
                 if (response == JOptionPane.YES_OPTION) { // Save data and close the window
                     TableModel model = form.elementsTable.getModel();
                     List<Meme> memes = new ArrayList<>();
@@ -120,7 +124,7 @@ public class MainForm {
                 } else if (response == JOptionPane.NO_OPTION) { // Close the window without saving
                     frame.dispose();
                 }
-                // If CANCEL is selected, do nothing; the window remains open
+                // If CANCEL is selected, do nothing
             }
         });
         
