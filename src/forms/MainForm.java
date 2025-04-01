@@ -33,6 +33,9 @@ public class MainForm {
     private int selectedRow = -1;
 
     public MainForm() {
+        String[] columns = new String[] {"Nombre", "Año origen", "Popularidad", "URL", "¿Es imagen?"};
+        DefaultTableModel dataModel;
+
         List<Meme> memes = SaveLoadManager.loadData();
         if (!memes.isEmpty()) {
             // Converting ArrayList to data for table:
@@ -44,12 +47,11 @@ public class MainForm {
                 data[i][3] = memes.get(i).getUrl();
                 data[i][4] = String.valueOf(memes.get(i).isEsImagen());
             }
-            TableModel dataModel = new DefaultTableModel(
-                    data,
-                    new String[] {"Nombre", "Año origen", "Popularidad", "URL", "¿Es imagen?"}
-            );
-            elementsTable.setModel(dataModel);
+            dataModel = new DefaultTableModel(data, columns);
+        } else {
+            dataModel = new DefaultTableModel(columns, 0);
         }
+        elementsTable.setModel(dataModel);
 
         elementsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         elementsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -85,6 +87,9 @@ public class MainForm {
                         selectedRow = -1;
                     }
                 }
+            }
+        });
+
         newButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -105,31 +110,35 @@ public class MainForm {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                // Perform actions before closing
-                int response = JOptionPane.showConfirmDialog(frame,
-                        "Quieres guardar los cambios?",
-                        "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
+                if (form.elementsTable.getModel().getRowCount() > 0) {
+                    // Perform actions before closing
+                    int response = JOptionPane.showConfirmDialog(frame,
+                            "Quieres guardar los cambios?",
+                            "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
 
-                if (response == JOptionPane.YES_OPTION) { // Save data and close the window
-                    TableModel model = form.elementsTable.getModel();
-                    List<Meme> memes = new ArrayList<>();
-                    for (int i = 0; i < model.getRowCount(); i++) {
-                        Meme meme = new Meme(
-                                model.getValueAt(i, 0).toString(),
-                                Integer.parseInt(model.getValueAt(i, 1).toString()),
-                                Integer.parseInt(model.getValueAt(i, 2).toString()),
-                                model.getValueAt(i, 3).toString(),
-                                Boolean.parseBoolean(model.getValueAt(i, 4).toString())
-                        );
-                        memes.add(meme);
+                    if (response == JOptionPane.YES_OPTION) { // Save data and close the window
+                        DefaultTableModel model = (DefaultTableModel) form.elementsTable.getModel();
+                        List<Meme> memes = new ArrayList<>();
+                        for (int i = 0; i < model.getRowCount(); i++) {
+                            Meme meme = new Meme(
+                                    model.getValueAt(i, 0).toString(),
+                                    Integer.parseInt(model.getValueAt(i, 1).toString()),
+                                    Integer.parseInt(model.getValueAt(i, 2).toString()),
+                                    model.getValueAt(i, 3).toString(),
+                                    Boolean.parseBoolean(model.getValueAt(i, 4).toString())
+                            );
+                            memes.add(meme);
+                        }
+                        SaveLoadManager.saveData(memes);
+                        frame.dispose();
+                    } else if (response == JOptionPane.NO_OPTION) { // Close the window without saving
+                        frame.dispose();
                     }
-                    SaveLoadManager.saveData(memes);
-                    frame.dispose();
-                } else if (response == JOptionPane.NO_OPTION) { // Close the window without saving
+                    // If CANCEL is selected, do nothing
+                } else {
                     frame.dispose();
                 }
-                // If CANCEL is selected, do nothing
             }
         });
         
@@ -138,6 +147,13 @@ public class MainForm {
     }
 
     public void addElementToTable(Meme meme) {
-
+        DefaultTableModel model = (DefaultTableModel) elementsTable.getModel();
+        model.addRow(new Object[]{
+                meme.getNombre(),
+                meme.getAnyoOrigen(),
+                meme.getPopularidad(),
+                meme.getUrl(),
+                meme.isEsImagen()
+        } );
     }
 }

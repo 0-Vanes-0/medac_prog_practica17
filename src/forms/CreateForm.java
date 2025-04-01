@@ -68,6 +68,8 @@ public class CreateForm extends JFrame {
     private void saveElement() {
         // Получаем данные из полей
         String nombre = nameField.getText();
+        String url = urlField.getText();
+        boolean esImagen = imagenCheckBox.isSelected();
 
         // Обработка года (anyo)
         int anyoOrigen;
@@ -79,17 +81,13 @@ public class CreateForm extends JFrame {
         }
 
         // Обработка популярности (popularidad)
-        Integer  popularidad;
+        int popularidad;
         try {
             popularidad = Integer.parseInt(popularidadField.getText()); // Тип данных для популярности - double
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "La popularidad debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        // Получаем URL
-        String url = urlField.getText();
-        boolean esImagen = imagenCheckBox.isSelected();
 
         // Создание нового объекта Meme
         Meme meme = new Meme(nombre, anyoOrigen, popularidad, url, esImagen);
