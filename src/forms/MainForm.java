@@ -1,6 +1,8 @@
 package forms;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Author: Ivan + Konstantin
@@ -17,7 +19,13 @@ public class MainForm {
     private JButton aboutButton;
 
     public MainForm() {
-
+        newButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                CreateForm createForm = new CreateForm(MainForm.this);
+                createForm.setVisible(true);
+            }
+        });
     }
 
     public static void main(String[] args) {
