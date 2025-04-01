@@ -85,6 +85,11 @@ public class MainForm {
                         selectedRow = -1;
                     }
                 }
+        newButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                CreateForm createForm = new CreateForm(MainForm.this);
+                createForm.setVisible(true);
             }
         });
     }
@@ -130,5 +135,9 @@ public class MainForm {
         
         frame.pack();
         frame.setVisible(true);
+    }
+
+    public void addElementToTable(Meme meme) {
+
     }
 }
