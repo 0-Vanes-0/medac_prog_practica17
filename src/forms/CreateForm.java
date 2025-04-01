@@ -1,5 +1,7 @@
 package forms;
 
+import classes.Meme;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -20,7 +22,7 @@ public class CreateForm extends JFrame {
         setSize(400, 300);
         setLayout(new GridLayout(6, 2));
 
-        // Создание компонентов 
+        // Создание компонентов
         JLabel nameLabel = new JLabel("Nombre:");
         nameField = new JTextField(20);
 
@@ -35,11 +37,11 @@ public class CreateForm extends JFrame {
 
         JLabel imagenLabel = new JLabel("¿Es imagen?");
         imagenCheckBox = new JCheckBox();
-        
+
         saveButton = new JButton("Guardar");
         cancelButton = new JButton("Cancelar");
 
-        // Добавление компонентов 
+        // Добавление компонентов
         add(nameLabel);
         add(nameField);
         add(anyoLabel);
@@ -64,54 +66,41 @@ public class CreateForm extends JFrame {
     }
 
     private void saveElement() {
-//        String name = nameField.getText();
-//        String type = (String) anyoField.getSelectedItem();
-//        boolean isActive = activeCheckBox.isSelected();
-//        String amount = amountField.getText();
-//        String description = descriptionField.getText();
-//
-//        // Сброс цвета меток на черный
-//        nameLabel.setForeground(Color.BLACK);
-//        amountLabel.setForeground(Color.BLACK);
-//        descriptionLabel.setForeground(Color.BLACK);
-//
-//        // Проверка на заполненность полей (boolean)
-//        boolean hasError = false;
-//        if (name.isEmpty()) {
-//            nameLabel.setForeground(Color.RED);
-//            hasError = true;
-//        }
-//        if (amount.isEmpty()) {
-//            amountLabel.setForeground(Color.RED);
-//            hasError = true;
-//        }
-//        if (description.isEmpty()) {
-//            descriptionLabel.setForeground(Color.RED);
-//            hasError = true;
-//        }
-//
-//        if (hasError) {
-//            JOptionPane.showMessageDialog(this, "¡Complete todos los campos!", "Error", JOptionPane.ERROR_MESSAGE);
-//            return;
-//        }
-//
-//        // Проверка является ли количество числом
-//        int amountValue;
-//        try {
-//            amountValue = Integer.parseInt(amount);
-//        } catch (NumberFormatException e) {
-//            JOptionPane.showMessageDialog(this, "Cantidad debe ser un número!", "Error", JOptionPane.ERROR_MESSAGE);
-//            amountLabel.setForeground(Color.RED);
-//            return;
-//        }
-//
-//        // Создание  Element и добавление его в первую форму и ArrayList
-//        Element newElement = new Element(name, type, isActive, amountValue, description);
-//        mainForm.addElementToList(newElement);
-//        mainForm.addElementToTable(name, type, isActive, amount, description);
-//
-//        //Сообщение сохранения
-//        JOptionPane.showMessageDialog(this, "¡Elemento guardado con éxito!", "W", JOptionPane.INFORMATION_MESSAGE);
-//        dispose();
+        // Получаем данные из полей
+        String nombre = nameField.getText();
+
+        // Обработка года (anyo)
+        int anyoOrigen;
+        try {
+            anyoOrigen = Integer.parseInt(anyoField.getText()); // Тип данных для года - int
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El año debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Обработка популярности (popularidad)
+        Integer  popularidad;
+        try {
+            popularidad = Integer.parseInt(popularidadField.getText()); // Тип данных для популярности - double
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "La popularidad debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Получаем URL
+        String url = urlField.getText();
+        boolean esImagen = imagenCheckBox.isSelected();
+
+        // Создание нового объекта Meme
+        Meme meme = new Meme(nombre, anyoOrigen, popularidad, url, esImagen);
+
+        // Отправка данных в MainForm для добавления
+        mainForm.addElementToTable(meme);
+
+        // Сообщение об успешном сохранении
+        JOptionPane.showMessageDialog(this, "¡Elemento guardado con éxito!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+        // Закрытие формы
+        dispose();
     }
 }

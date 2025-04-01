@@ -1,5 +1,7 @@
 package forms;
 
+import classes.Meme;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,5 +38,9 @@ public class MainForm {
         frame.setMinimumSize(form.panelMain.getMinimumSize());
         frame.pack();
         frame.setVisible(true);
+    }
+
+    public void addElementToTable(Meme meme) {
+
     }
 }
