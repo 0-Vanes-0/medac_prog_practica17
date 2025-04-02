@@ -7,7 +7,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -32,6 +31,7 @@ public class MainForm {
     private JScrollPane tableScrollPane;
 
     private int selectedRow = -1;
+    private boolean hasChanges = false;
 
     public MainForm() {
         String[] columns = new String[] {"Nombre", "Año origen", "Popularidad", "URL", "¿Es imagen?"};
@@ -106,11 +106,11 @@ public class MainForm {
                 } else {
                     DefaultTableModel model = (DefaultTableModel) elementsTable.getModel();
                     Meme meme = new Meme(
-                            (String) model.getValueAt(selectedRow, 0),
-                            (Integer) model.getValueAt(selectedRow, 1),
-                            (Integer) model.getValueAt(selectedRow, 2),
-                            (String) model.getValueAt(selectedRow, 3),
-                            (Boolean) model.getValueAt(selectedRow, 4)
+                            model.getValueAt(selectedRow, 0).toString(),
+                            Integer.parseInt(model.getValueAt(selectedRow, 1).toString()),
+                            Integer.parseInt(model.getValueAt(selectedRow, 2).toString()),
+                            model.getValueAt(selectedRow, 3).toString(),
+                            Boolean.parseBoolean(model.getValueAt(selectedRow, 4).toString())
                     );
                     CreateForm createForm = new CreateForm(MainForm.this, meme);
                     createForm.setVisible(true);
@@ -130,14 +130,51 @@ public class MainForm {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (form.elementsTable.getModel().getRowCount() > 0) {
+                if (form.elementsTable.getModel().getRowCount() > 0 && form.hasChanges) {
                     showSaveChangesDialog(form);
                 } else {
                     frame.dispose();
                 }
             }
         });
-        
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("Fichero");
+        JMenuItem saveMenuItem = new JMenuItem("Guardar");
+        JMenuItem exitMenuItem = new JMenuItem("Salir");
+        JMenu helpMenu = new JMenu("Ayuda");
+        JMenuItem aboutMenuItem = new JMenuItem("Info sobre creadores");
+        fileMenu.add(saveMenuItem);
+        fileMenu.add(exitMenuItem);
+        helpMenu.add(aboutMenuItem);
+        menuBar.add(fileMenu);
+        menuBar.add(helpMenu);
+        frame.setJMenuBar(menuBar);
+
+        saveMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (form.hasChanges) {
+                    saveData(form);
+                    JOptionPane.showMessageDialog(frame, "Guardado!", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "No hay cambios.", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+        exitMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                exit(form);
+            }
+        });
+        aboutMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JOptionPane.showMessageDialog(frame, "Autores: Ivan y Konstatin\nMainForm por Ivan\nCreateForm por Konstantin", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
         frame.pack();
         frame.setVisible(true);
     }
@@ -151,6 +188,7 @@ public class MainForm {
                 meme.getUrl(),
                 meme.isEsImagen()
         } );
+        hasChanges = true;
     }
 
     public void modifyCurrentElement(Meme meme) {
@@ -160,6 +198,15 @@ public class MainForm {
         model.setValueAt(meme.getPopularidad(), selectedRow, 2);
         model.setValueAt(meme.getUrl(), selectedRow, 3);
         model.setValueAt(meme.isEsImagen(), selectedRow, 4);
+        hasChanges = true;
+    }
+
+    private static void exit(MainForm form) {
+        if (form.elementsTable.getModel().getRowCount() > 0 && form.hasChanges) {
+            showSaveChangesDialog(form);
+        } else {
+            frame.dispose();
+        }
     }
 
     private static void showSaveChangesDialog(MainForm form) {
@@ -170,23 +217,28 @@ public class MainForm {
                 JOptionPane.QUESTION_MESSAGE);
 
         if (response == JOptionPane.YES_OPTION) { // Save data and close the window
-            DefaultTableModel model = (DefaultTableModel) form.elementsTable.getModel();
-            List<Meme> memes = new ArrayList<>();
-            for (int i = 0; i < model.getRowCount(); i++) {
-                Meme meme = new Meme(
-                        model.getValueAt(i, 0).toString(),
-                        Integer.parseInt(model.getValueAt(i, 1).toString()),
-                        Integer.parseInt(model.getValueAt(i, 2).toString()),
-                        model.getValueAt(i, 3).toString(),
-                        Boolean.parseBoolean(model.getValueAt(i, 4).toString())
-                );
-                memes.add(meme);
-            }
-            SaveLoadManager.saveData(memes);
+            saveData(form);
             frame.dispose();
         } else if (response == JOptionPane.NO_OPTION) { // Close the window without saving
             frame.dispose();
         }
         // If CANCEL is selected, do nothing
+    }
+
+    private static void saveData(MainForm form) {
+        DefaultTableModel model = (DefaultTableModel) form.elementsTable.getModel();
+        List<Meme> memes = new ArrayList<>();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Meme meme = new Meme(
+                    model.getValueAt(i, 0).toString(),
+                    Integer.parseInt(model.getValueAt(i, 1).toString()),
+                    Integer.parseInt(model.getValueAt(i, 2).toString()),
+                    model.getValueAt(i, 3).toString(),
+                    Boolean.parseBoolean(model.getValueAt(i, 4).toString())
+            );
+            memes.add(meme);
+        }
+        SaveLoadManager.saveData(memes);
+        form.hasChanges = false;
     }
 }
