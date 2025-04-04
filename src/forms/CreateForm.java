@@ -28,7 +28,7 @@ public class CreateForm extends JFrame {
         setSize(400, 300);
         setLayout(new GridLayout(6, 2));
 
-        // Создание компонентов
+        // creating components
         JLabel nameLabel = new JLabel("Nombre:");
         nameField = new JTextField(20);
         if (meme != null) {
@@ -62,7 +62,7 @@ public class CreateForm extends JFrame {
         saveButton = new JButton("Guardar");
         cancelButton = new JButton("Cancelar");
 
-        // Добавление компонентов
+        // components
         add(nameLabel);
         add(nameField);
         add(anyoLabel);
@@ -76,14 +76,14 @@ public class CreateForm extends JFrame {
         add(saveButton);
         add(cancelButton);
 
-        // Действие при нажатии кнопки сохранения
+        // save
         if (meme != null) {
             saveButton.addActionListener(e -> saveElement(true));
         } else {
             saveButton.addActionListener(e -> saveElement(false));
         }
 
-        // Действие при нажатии кнопки отмены
+        // cancel
         cancelButton.addActionListener(e -> dispose());
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -91,12 +91,12 @@ public class CreateForm extends JFrame {
     }
 
     private void saveElement(boolean existingElement) {
-        // Получаем данные из полей
+        // getting information
         String nombre = nameField.getText();
         String url = urlField.getText();
         boolean esImagen = imagenCheckBox.isSelected();
 
-        // Обработка года (anyo)
+        // year parsing
         int anyoOrigen;
         try {
             anyoOrigen = Integer.parseInt(anyoField.getText()); // Тип данных для года - int
@@ -105,7 +105,7 @@ public class CreateForm extends JFrame {
             return;
         }
 
-        // Обработка популярности (popularidad)
+        // pasring (popularidad)
         int popularidad;
         try {
             popularidad = Integer.parseInt(popularidadField.getText()); // Тип данных для популярности - double
@@ -114,20 +114,20 @@ public class CreateForm extends JFrame {
             return;
         }
 
-        // Создание нового объекта Meme
+        // object meme
         Meme meme = new Meme(nombre, anyoOrigen, popularidad, url, esImagen);
 
-        // Отправка данных в MainForm для добавления
+        // sending information to mainform
         if (existingElement) {
             mainForm.modifyCurrentElement(meme);
         } else {
             mainForm.addElementToTable(meme);
         }
 
-        // Сообщение об успешном сохранении
+        // message about saving
         JOptionPane.showMessageDialog(this, "¡Elemento guardado con éxito!", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
-        // Закрытие формы
+        // close form
         dispose();
     }
 }
